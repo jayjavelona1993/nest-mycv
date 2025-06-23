@@ -13,16 +13,18 @@ export class UsersService {
         return this.repo.save(user);
     }
 
-    async findOne(id: number): Promise<User | null> {
+    async findOne(id: (number | null)): Promise<User | null> {
+        if(!id) return null;
         const user:(User | null) = await this.repo.findOne({where: {id}});
         if(!user) throw new NotFoundException('User not found');
         return user;
     }
+
     find(email: string): Promise<User[]> {
         return this.repo.find({where: {email}});
     }
 
-    async update(id: number, attrs: Partial<User>): Promise<User> {
+    async update(id: number, attrs: Partial<User>): Promise<User | null> {
         const user:(User | null) = await this.findOne(id);
         if(!user) throw new NotFoundException('User not found');
         Object.assign(user, attrs);
